@@ -6,6 +6,12 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
+  root: "src/ui",
+  publicDir: "../../public",
+  build: {
+    outDir: "../../dist",
+    emptyOutDir: true,
+  },
   plugins: [
     react(),
     babel({ presets: [reactCompilerPreset()] }),
