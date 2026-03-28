@@ -1,3 +1,10 @@
+// @title           Calculator HTTP API
+// @version         1.0
+// @description     This is a calculator server implementing a Hexagonal Architecture.
+
+// @host      localhost:8080
+// @BasePath  /api
+
 package main
 
 import (

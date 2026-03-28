@@ -1,6 +1,12 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "calculator-server/docs"
+)
 
 type Router struct {
 	ctrl *CalculatorController
@@ -13,6 +19,9 @@ func NewRouter(c *CalculatorController) *Router {
 }
 
 func (r *Router) RegisterRoutes(engine *gin.Engine) {
+	// Swagger documentation route
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	api := engine.Group("/api")
 	{
 		api.POST("/add", r.ctrl.Add)
@@ -23,3 +32,4 @@ func (r *Router) RegisterRoutes(engine *gin.Engine) {
 		api.POST("/percentage", r.ctrl.Percentage)
 	}
 }
+
