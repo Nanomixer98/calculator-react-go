@@ -1,0 +1,854 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>builder: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">calculator-server/builder/server.go (100.0%)</option>
+				
+				<option value="file1">calculator-server/controller/bind.go (80.0%)</option>
+				
+				<option value="file2">calculator-server/controller/calculator.go (100.0%)</option>
+				
+				<option value="file3">calculator-server/controller/response.go (100.0%)</option>
+				
+				<option value="file4">calculator-server/controller/router.go (100.0%)</option>
+				
+				<option value="file5">calculator-server/core/app/calculator.go (100.0%)</option>
+				
+				<option value="file6">calculator-server/docs/docs.go (0.0%)</option>
+				
+				<option value="file7">calculator-server/main.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package builder
+
+import (
+        "calculator-server/controller"
+        "calculator-server/core/app"
+
+        "github.com/gin-gonic/gin"
+)
+
+// corsMiddleware provides a basic CORS mechanism for the router
+func corsMiddleware() gin.HandlerFunc <span class="cov8" title="1">{
+        return func(c *gin.Context) </span><span class="cov8" title="1">{
+                c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+                c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+                c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+                if c.Request.Method == "OPTIONS" </span><span class="cov8" title="1">{
+                        c.AbortWithStatus(204)
+                        return
+                }</span>
+                <span class="cov8" title="1">c.Next()</span>
+        }
+}
+
+func BuildServer() *gin.Engine <span class="cov8" title="1">{
+        engine := gin.Default()
+        engine.Use(corsMiddleware())
+
+        calcApp := app.NewCalculatorApp()
+        calcController := controller.NewCalculatorController(calcApp)
+
+        router := controller.NewRouter(calcController)
+        router.RegisterRoutes(engine)
+
+        return engine
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package controller
+
+import (
+        "calculator-server/models"
+        "errors"
+        "math"
+
+        "github.com/gin-gonic/gin"
+)
+
+// BindBinaryRequest extracts, binds and validates a binary operation request from the gin context.
+func BindBinaryRequest(c *gin.Context) (*models.BinaryOperationRequest, error) <span class="cov8" title="1">{
+        var req models.BinaryOperationRequest
+        if err := c.ShouldBindJSON(&amp;req); err != nil </span><span class="cov8" title="1">{
+                return nil, errors.New("invalid JSON body")
+        }</span>
+        <span class="cov8" title="1">if req.A == nil || req.B == nil </span><span class="cov8" title="1">{
+                return nil, errors.New("both fields 'a' and 'b' are required")
+        }</span>
+        <span class="cov8" title="1">if math.IsNaN(*req.A) || math.IsNaN(*req.B) </span><span class="cov0" title="0">{
+                return nil, errors.New("NaN values are not allowed")
+        }</span>
+        <span class="cov8" title="1">if math.IsInf(*req.A, 0) || math.IsInf(*req.B, 0) </span><span class="cov0" title="0">{
+                return nil, errors.New("infinite values are not allowed")
+        }</span>
+        <span class="cov8" title="1">return &amp;req, nil</span>
+}
+
+// BindUnaryRequest extracts, binds and validates a unary operation request from the gin context.
+func BindUnaryRequest(c *gin.Context) (*models.UnaryOperationRequest, error) <span class="cov8" title="1">{
+        var req models.UnaryOperationRequest
+        if err := c.ShouldBindJSON(&amp;req); err != nil </span><span class="cov8" title="1">{
+                return nil, errors.New("invalid JSON body")
+        }</span>
+        <span class="cov8" title="1">if req.Value == nil </span><span class="cov8" title="1">{
+                return nil, errors.New("field 'value' is required")
+        }</span>
+        <span class="cov8" title="1">if math.IsNaN(*req.Value) </span><span class="cov0" title="0">{
+                return nil, errors.New("NaN value is not allowed")
+        }</span>
+        <span class="cov8" title="1">if math.IsInf(*req.Value, 0) </span><span class="cov0" title="0">{
+                return nil, errors.New("infinite value is not allowed")
+        }</span>
+        <span class="cov8" title="1">return &amp;req, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package controller
+
+import (
+        "calculator-server/core/port"
+
+        "github.com/gin-gonic/gin"
+)
+
+type CalculatorController struct {
+        app port.CalculatorApp
+}
+
+func NewCalculatorController(a port.CalculatorApp) *CalculatorController <span class="cov8" title="1">{
+        return &amp;CalculatorController{app: a}
+}</span>
+
+// Endpoints
+
+// Add godoc
+// @Summary      Addition
+// @Description  Adds operand A to operand B.
+// @Tags         Binary Operations
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.BinaryOperationRequest  true  "Operands"
+// @Success      200      {object}  models.CalculationResponse     "Calculation result"
+// @Failure      400      {object}  models.ErrorResponse           "Error like Invalid JSON, NaN/Inf, or Overflow"
+// @Router       /add [post]
+func (ctrl *CalculatorController) Add(c *gin.Context) <span class="cov8" title="1">{
+        req, err := BindBinaryRequest(c)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleBindError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">result, err := ctrl.app.Add(*req.A, *req.B)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">HandleSuccess(c, result)</span>
+}
+
+// Subtract godoc
+// @Summary      Subtraction
+// @Description  Subtracts operand B from operand A.
+// @Tags         Binary Operations
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.BinaryOperationRequest  true  "Operands"
+// @Success      200      {object}  models.CalculationResponse     "Calculation result"
+// @Failure      400      {object}  models.ErrorResponse
+// @Router       /subtract [post]
+func (ctrl *CalculatorController) Subtract(c *gin.Context) <span class="cov8" title="1">{
+        req, err := BindBinaryRequest(c)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleBindError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">result, err := ctrl.app.Subtract(*req.A, *req.B)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">HandleSuccess(c, result)</span>
+}
+
+// Multiply godoc
+// @Summary      Multiplication
+// @Description  Multiplies operand A by operand B.
+// @Tags         Binary Operations
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.BinaryOperationRequest  true  "Operands"
+// @Success      200      {object}  models.CalculationResponse     "Calculation result"
+// @Failure      400      {object}  models.ErrorResponse
+// @Router       /multiply [post]
+func (ctrl *CalculatorController) Multiply(c *gin.Context) <span class="cov8" title="1">{
+        req, err := BindBinaryRequest(c)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleBindError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">result, err := ctrl.app.Multiply(*req.A, *req.B)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">HandleSuccess(c, result)</span>
+}
+
+// Divide godoc
+// @Summary      Division
+// @Description  Divides operand A by operand B. Returns a 400 Error in case of division by zero.
+// @Tags         Binary Operations
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.BinaryOperationRequest  true  "Operands"
+// @Success      200      {object}  models.CalculationResponse     "Calculation result"
+// @Failure      400      {object}  models.ErrorResponse
+// @Router       /divide [post]
+func (ctrl *CalculatorController) Divide(c *gin.Context) <span class="cov8" title="1">{
+        req, err := BindBinaryRequest(c)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleBindError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">result, err := ctrl.app.Divide(*req.A, *req.B)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">HandleSuccess(c, result)</span>
+}
+
+// Negate godoc
+// @Summary      Negation (Sign Change)
+// @Description  Returns the negative value of the input.
+// @Tags         Unary Operations
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.UnaryOperationRequest  true  "Single operand"
+// @Success      200      {object}  models.CalculationResponse    "Calculation result"
+// @Failure      400      {object}  models.ErrorResponse
+// @Router       /negate [post]
+func (ctrl *CalculatorController) Negate(c *gin.Context) <span class="cov8" title="1">{
+        req, err := BindUnaryRequest(c)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleBindError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">result, err := ctrl.app.Negate(*req.Value)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">HandleSuccess(c, result)</span>
+}
+
+// Percentage godoc
+// @Summary      Percentage
+// @Description  Returns the percentage of the given value (value / 100).
+// @Tags         Unary Operations
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.UnaryOperationRequest  true  "Single operand"
+// @Success      200      {object}  models.CalculationResponse    "Calculation result"
+// @Failure      400      {object}  models.ErrorResponse
+// @Router       /percentage [post]
+func (ctrl *CalculatorController) Percentage(c *gin.Context) <span class="cov8" title="1">{
+        req, err := BindUnaryRequest(c)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleBindError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">result, err := ctrl.app.Percentage(*req.Value)
+        if err != nil </span><span class="cov8" title="1">{
+                HandleError(c, err)
+                return
+        }</span>
+
+        <span class="cov8" title="1">HandleSuccess(c, result)</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package controller
+
+import (
+        "calculator-server/core/app"
+        "calculator-server/models"
+        "errors"
+        "net/http"
+
+        "github.com/gin-gonic/gin"
+)
+
+// HandleError maps domain errors to standard HTTP responses with matching status codes.
+func HandleError(c *gin.Context, err error) <span class="cov8" title="1">{
+        switch </span>{
+        case errors.Is(err, app.ErrDivisionByZero), errors.Is(err, app.ErrOverflow):<span class="cov8" title="1">
+                c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})</span>
+        default:<span class="cov8" title="1">
+                c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: "unexpected error"})</span>
+        }
+}
+
+// HandleBindError responds with an HTTP status code for generic invalid requests body or bindings.
+func HandleBindError(c *gin.Context, err error) <span class="cov8" title="1">{
+        c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})
+}</span>
+
+// HandleSuccess outputs a standardized success calculation response matching the application format.
+func HandleSuccess(c *gin.Context, result float64) <span class="cov8" title="1">{
+        c.JSON(http.StatusOK, models.CalculationResponse{Result: result})
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package controller
+
+import (
+        "github.com/gin-gonic/gin"
+        swaggerFiles "github.com/swaggo/files"
+        ginSwagger "github.com/swaggo/gin-swagger"
+
+        _ "calculator-server/docs"
+)
+
+type Router struct {
+        ctrl *CalculatorController
+}
+
+func NewRouter(c *CalculatorController) *Router <span class="cov8" title="1">{
+        return &amp;Router{
+                ctrl: c,
+        }
+}</span>
+
+func (r *Router) RegisterRoutes(engine *gin.Engine) <span class="cov8" title="1">{
+        // Swagger documentation route
+        engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+        api := engine.Group("/api")
+        </span><span class="cov8" title="1">{
+                api.POST("/add", r.ctrl.Add)
+                api.POST("/subtract", r.ctrl.Subtract)
+                api.POST("/multiply", r.ctrl.Multiply)
+                api.POST("/divide", r.ctrl.Divide)
+                api.POST("/negate", r.ctrl.Negate)
+                api.POST("/percentage", r.ctrl.Percentage)
+        }</span>
+}
+
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package app
+
+import (
+        "calculator-server/core/port"
+        "errors"
+        "math"
+)
+
+var (
+        ErrDivisionByZero = errors.New("division by zero is not allowed")
+        ErrOverflow       = errors.New("result is out of representable range")
+)
+
+// CalculatorApp is the interface describing business logic operations.
+
+// calculatorApp implements CalculatorApp.
+type calculatorApp struct{}
+
+func NewCalculatorApp() port.CalculatorApp <span class="cov8" title="1">{
+        return &amp;calculatorApp{}
+}</span>
+
+func (c *calculatorApp) Add(a, b float64) (float64, error) <span class="cov8" title="1">{
+        result := a + b
+        if math.IsInf(result, 0) </span><span class="cov8" title="1">{
+                return 0, ErrOverflow
+        }</span>
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (c *calculatorApp) Subtract(a, b float64) (float64, error) <span class="cov8" title="1">{
+        result := a - b
+        if math.IsInf(result, 0) </span><span class="cov8" title="1">{
+                return 0, ErrOverflow
+        }</span>
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (c *calculatorApp) Multiply(a, b float64) (float64, error) <span class="cov8" title="1">{
+        result := a * b
+        if math.IsInf(result, 0) </span><span class="cov8" title="1">{
+                return 0, ErrOverflow
+        }</span>
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (c *calculatorApp) Divide(a, b float64) (float64, error) <span class="cov8" title="1">{
+        if b == 0 </span><span class="cov8" title="1">{
+                return 0, ErrDivisionByZero
+        }</span>
+        <span class="cov8" title="1">result := a / b
+        if math.IsInf(result, 0) </span><span class="cov8" title="1">{
+                return 0, ErrOverflow
+        }</span>
+        <span class="cov8" title="1">return result, nil</span>
+}
+
+func (c *calculatorApp) Negate(value float64) (float64, error) <span class="cov8" title="1">{
+        return -value, nil
+}</span>
+
+func (c *calculatorApp) Percentage(value float64) (float64, error) <span class="cov8" title="1">{
+        return value / 100, nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">// Package docs Code generated by swaggo/swag. DO NOT EDIT
+package docs
+
+import "github.com/swaggo/swag"
+
+const docTemplate = `{
+    "schemes": {{ marshal .Schemes }},
+    "swagger": "2.0",
+    "info": {
+        "description": "{{escape .Description}}",
+        "title": "{{.Title}}",
+        "contact": {},
+        "version": "{{.Version}}"
+    },
+    "host": "{{.Host}}",
+    "basePath": "{{.BasePath}}",
+    "paths": {
+        "/add": {
+            "post": {
+                "description": "Adds operand A to operand B.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Binary Operations"
+                ],
+                "summary": "Addition",
+                "parameters": [
+                    {
+                        "description": "Operands",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BinaryOperationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculation result",
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error like Invalid JSON, NaN/Inf, or Overflow",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/divide": {
+            "post": {
+                "description": "Divides operand A by operand B. Returns a 400 Error in case of division by zero.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Binary Operations"
+                ],
+                "summary": "Division",
+                "parameters": [
+                    {
+                        "description": "Operands",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BinaryOperationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculation result",
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/multiply": {
+            "post": {
+                "description": "Multiplies operand A by operand B.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Binary Operations"
+                ],
+                "summary": "Multiplication",
+                "parameters": [
+                    {
+                        "description": "Operands",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BinaryOperationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculation result",
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/negate": {
+            "post": {
+                "description": "Returns the negative value of the input.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unary Operations"
+                ],
+                "summary": "Negation (Sign Change)",
+                "parameters": [
+                    {
+                        "description": "Single operand",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UnaryOperationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculation result",
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/percentage": {
+            "post": {
+                "description": "Returns the percentage of the given value (value / 100).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unary Operations"
+                ],
+                "summary": "Percentage",
+                "parameters": [
+                    {
+                        "description": "Single operand",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UnaryOperationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculation result",
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/subtract": {
+            "post": {
+                "description": "Subtracts operand B from operand A.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Binary Operations"
+                ],
+                "summary": "Subtraction",
+                "parameters": [
+                    {
+                        "description": "Operands",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BinaryOperationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculation result",
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.BinaryOperationRequest": {
+            "type": "object",
+            "properties": {
+                "a": {
+                    "type": "number"
+                },
+                "b": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.CalculationResponse": {
+            "type": "object",
+            "properties": {
+                "result": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.UnaryOperationRequest": {
+            "type": "object",
+            "properties": {
+                "value": {
+                    "type": "number"
+                }
+            }
+        }
+    }
+}`
+
+// SwaggerInfo holds exported Swagger Info so clients can modify it
+var SwaggerInfo = &amp;swag.Spec{
+        Version:          "1.0",
+        Host:             "localhost:8080",
+        BasePath:         "/api",
+        Schemes:          []string{},
+        Title:            "Calculator HTTP API",
+        Description:      "This is a calculator server implementing a Hexagonal Architecture.",
+        InfoInstanceName: "swagger",
+        SwaggerTemplate:  docTemplate,
+        LeftDelim:        "{{",
+        RightDelim:       "}}",
+}
+
+func init() <span class="cov0" title="0">{
+        swag.Register(SwaggerInfo.InstanceName(), SwaggerInfo)
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">// @title           Calculator HTTP API
+// @version         1.0
+// @description     This is a calculator server implementing a Hexagonal Architecture.
+
+// @host      localhost:8080
+// @BasePath  /api
+
+package main
+
+import (
+        "fmt"
+        "log"
+
+        "calculator-server/builder"
+)
+
+func main() <span class="cov0" title="0">{
+        server := builder.BuildServer()
+
+        port := ":8080"
+        fmt.Printf("Calculator Gin server listening on http://localhost%s\n", port)
+
+        if err := server.Run(port); err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Server failed to start: %v", err)
+        }</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
