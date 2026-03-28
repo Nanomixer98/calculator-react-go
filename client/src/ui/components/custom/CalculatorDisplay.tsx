@@ -46,6 +46,7 @@ export function CalculatorDisplay({
         </div>
 
         <span
+          data-testid="calculator-display"
           className={`text-5xl font-light text-white truncate transition-opacity duration-200 ${
             loading ? "opacity-50" : "opacity-100"
           }`}

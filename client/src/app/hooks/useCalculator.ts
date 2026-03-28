@@ -66,36 +66,29 @@ export function useCalculator(api: CalculatorApiPort) {
         };
       }
 
-      if (state.operator) {
-        const previousValue = parseFloat(state.previousValue);
-        let result = 0;
+      // Calculate with previous operator
+      const previousValue = parseFloat(state.previousValue);
+      let result = 0;
 
-        switch (state.operator) {
-          case "+":
-            result = await api.add(previousValue, inputValue);
-            break;
-          case "-":
-            result = await api.subtract(previousValue, inputValue);
-            break;
-          case "×":
-            result = await api.multiply(previousValue, inputValue);
-            break;
-          case "÷":
-            result = await api.divide(previousValue, inputValue);
-            break;
-        }
-
-        const resultStr = String(result);
-        return {
-          display: resultStr,
-          previousValue: resultStr,
-          waitingForOperand: true,
-          operator: nextOperator,
-          error: null,
-        };
+      switch (state.operator) {
+        case "+":
+          result = await api.add(previousValue, inputValue);
+          break;
+        case "-":
+          result = await api.subtract(previousValue, inputValue);
+          break;
+        case "×":
+          result = await api.multiply(previousValue, inputValue);
+          break;
+        case "÷":
+          result = await api.divide(previousValue, inputValue);
+          break;
       }
 
+      const resultStr = String(result);
       return {
+        display: resultStr,
+        previousValue: resultStr,
         waitingForOperand: true,
         operator: nextOperator,
         error: null,
