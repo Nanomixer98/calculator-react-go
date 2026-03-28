@@ -1,8 +1,8 @@
 package builder
 
 import (
-	"calculator-server/app"
 	"calculator-server/controller"
+	"calculator-server/core/app"
 
 	"github.com/gin-gonic/gin"
 )

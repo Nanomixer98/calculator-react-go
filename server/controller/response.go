@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"calculator-server/app"
+	"calculator-server/core/app"
 	"calculator-server/models"
 	"errors"
 	"net/http"

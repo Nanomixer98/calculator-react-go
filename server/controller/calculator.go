@@ -1,16 +1,16 @@
 package controller
 
 import (
-	"calculator-server/app"
+	"calculator-server/core/port"
 
 	"github.com/gin-gonic/gin"
 )
 
 type CalculatorController struct {
-	app app.CalculatorApp
+	app port.CalculatorApp
 }
 
-func NewCalculatorController(a app.CalculatorApp) *CalculatorController {
+func NewCalculatorController(a port.CalculatorApp) *CalculatorController {
 	return &CalculatorController{app: a}
 }
 
