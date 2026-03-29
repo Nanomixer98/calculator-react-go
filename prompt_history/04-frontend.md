@@ -1,6 +1,6 @@
 # Antigravity - Frontend Refactoring
 
-**Assistant**: Antigravity
+**Assistant**: Antigravity (Gemini 3.1 Low + Gemimi 3 Flash)
 
 ## Hexagonal Architecture Migration
 

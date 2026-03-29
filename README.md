@@ -6,15 +6,43 @@ A full-stack calculator application built with **React + TypeScript** frontend a
 
 ```
 calculator-react-go/
-├── client/          # React + TypeScript + Vite frontend
-├── server/          # Go backend with Gin framework
-├── README.md        # This file
-└── prompt_history/  # Development history
+├── client/              # React + TypeScript + Vite frontend
+│   ├── Dockerfile
+│   └── nginx.conf
+├── server/              # Go backend with Gin framework
+│   └── Dockerfile
+├── docker-compose.yml   # Docker orchestration
+├── README.md            # This file
+└── prompt_history/      # Development history
 ```
 
 ## Quick Start
 
-### Prerequisites
+### Option 1: Docker (Recommended)
+
+The fastest way to run the full application:
+
+```bash
+# Build and start both services
+docker-compose up --build
+
+# Or run in background
+docker-compose up -d --build
+```
+
+Access the application:
+- **Frontend**: http://localhost (puerto 80)
+- **API**: http://localhost:8080
+- **Swagger Docs**: http://localhost:8080/swagger/index.html
+
+To stop:
+```bash
+docker-compose down
+```
+
+### Option 2: Manual Setup
+
+#### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or later)
 - [Go](https://golang.org/doc/install) (v1.26 or later)
@@ -125,6 +153,33 @@ go test -v ./...            # Run tests with verbose output
 ```
 
 See [server/README.md](server/README.md) and [server/TESTING.md](server/TESTING.md) for detailed server documentation.
+
+### Docker Development
+
+```bash
+# Build and start all services
+docker-compose up --build
+
+# Run in background (detached mode)
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
+
+# View logs for specific service
+docker-compose logs -f server
+docker-compose logs -f client
+
+# Stop services
+docker-compose down
+
+# Stop and remove volumes
+docker-compose down -v
+
+# Rebuild specific service
+docker-compose up --build server
+docker-compose up --build client
+```
 
 ## Design Rationale
 

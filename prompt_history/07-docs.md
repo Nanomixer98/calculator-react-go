@@ -1,6 +1,6 @@
 # Windsurf - Documentation Consolidation
 
-**Assistant**: Windsurf
+**Assistant**: Windsurf (Kimi K2.5)
 
 ## Documentation Task
 

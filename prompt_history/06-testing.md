@@ -1,6 +1,6 @@
 # Windsurf - Testing Coverage Improvements
 
-**Assistant**: Windsurf
+**Assistant**: Windsurf (Kimi K2.5)
 
 ## Frontend Coverage
 

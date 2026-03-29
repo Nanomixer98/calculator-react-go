@@ -1,6 +1,6 @@
 # Antigravity - Backend Implementation
 
-**Assistant**: Antigravity
+**Assistant**: Antigravity (Claude Opus 4.6 + Gemini 3 Flash)
 
 ## Hexagonal Architecture Setup
 

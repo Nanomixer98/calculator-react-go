@@ -1,6 +1,6 @@
 # Antigravity - Frontend Testing Setup
 
-**Assistant**: Antigravity
+**Assistant**: Antigravity (Gemini 3.1 High)
 
 ## Test Implementation
 

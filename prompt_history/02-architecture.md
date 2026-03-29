@@ -1,6 +1,6 @@
 # Antigravity - Architecture Definition
 
-**Assistant**: Antigravity
+**Assistant**: Antigravity (Claude Sonnet 4.6)
 
 ## Frontend/Backend Separation
 
