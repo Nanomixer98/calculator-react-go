@@ -228,6 +228,20 @@ docker-compose up --build client
 - Responsive UI with loading states
 - Comprehensive test coverage on both frontend and backend
 
+## Assumptions
+
+### Architecture
+
+- **Stateless backend**: All calculations are performed on-demand with no data persistence or session management
+- **JSON-only communication** between client and server
+- **Required fields**: Binary operations require both `a` and `b` fields; unary operations require `value` 
+- **Display-first logic**: Calculator state tracks display string separately from numeric values; parsing happens at calculation time 
+- **No local calculation**: All arithmetic operations are delegated to the backend API; frontend has zero calculation logic
+- **Single decimal point**: Input validation prevents multiple decimal points in a single number
+- **Operator symbols**: UI uses Unicode symbols (`×`, `÷`, `xʸ`, `√`) mapped to backend operations
+- **Chained operations**: When entering `5 + 3 × 2`, the calculator evaluates `5 + 3` first, then multiplies by 2
+- **Unary operations**: Negate, percentage, and square root apply immediately to the current display value
+
 ## License
 
 MIT
