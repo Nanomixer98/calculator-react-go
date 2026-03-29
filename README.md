@@ -92,6 +92,27 @@ This project implements **Hexagonal Architecture** (also known as Ports and Adap
 - **App Layer**: React hooks orchestrating use cases
 - **UI Layer**: React components (pages and reusable components)
 
+## Features
+
+### Basic Operations
+- **Addition**: Adds two numbers together
+- **Subtraction**: Subtracts second number from first
+- **Multiplication**: Multiplies two numbers
+- **Division**: Divides first number by second (with zero protection)
+
+### Advanced Operations
+- **Exponentiation**: Raises base to power of exponent (xʸ notation)
+- **Square Root**: Calculates square root of a number (√ notation)
+- **Percentage**: Converts value to percentage (value / 100)
+- **Negation**: Changes sign of number (+/-)
+
+### User Interface
+- **Modern Design**: Clean, calculator-style interface with Tailwind CSS
+- **Responsive**: Works on different screen sizes
+- **Visual Feedback**: Active operators highlighted with color coding
+- **Error Handling**: Clear error messages for invalid operations
+- **Loading States**: Disabled buttons during calculations
+
 ## API Documentation
 
 Once the server is running, interactive Swagger documentation is available at:
@@ -108,6 +129,8 @@ All endpoints accept POST requests at `/api/*`:
 | `POST /api/subtract` | Subtraction | `{"a": number, "b": number}` |
 | `POST /api/multiply` | Multiplication | `{"a": number, "b": number}` |
 | `POST /api/divide` | Division | `{"a": number, "b": number}` |
+| `POST /api/exponentiate` | Exponentiation (power) | `{"a": number, "b": number}` |
+| `POST /api/squareroot` | Square Root | `{"value": number}` |
 | `POST /api/negate` | Negation (sign change) | `{"value": number}` |
 | `POST /api/percentage` | Percentage (value / 100) | `{"value": number}` |
 
