@@ -106,13 +106,6 @@ This project implements **Hexagonal Architecture** (also known as Ports and Adap
 - **Percentage**: Converts value to percentage (value / 100)
 - **Negation**: Changes sign of number (+/-)
 
-### User Interface
-- **Modern Design**: Clean, calculator-style interface with Tailwind CSS
-- **Responsive**: Works on different screen sizes
-- **Visual Feedback**: Active operators highlighted with color coding
-- **Error Handling**: Clear error messages for invalid operations
-- **Loading States**: Disabled buttons during calculations
-
 ## API Documentation
 
 Once the server is running, interactive Swagger documentation is available at:

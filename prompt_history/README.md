@@ -13,6 +13,8 @@ This folder contains the chronological history of prompts used to build this cal
 | [05-testing.md](05-testing.md) | Antigravity: Test setup |
 | [06-testing.md](06-testing.md) | Windsurf: Coverage improvements |
 | [07-docs.md](07-docs.md) | Windsurf: Documentation consolidation |
+| [08-docker.md](08-docker.md) | Windsurf: Docker setup |
+| [09-new-operations.md](09-new-operations.md) | Cascade: Advanced operations implementation |
 
 ## Assistants
 
