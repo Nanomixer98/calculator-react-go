@@ -12,7 +12,7 @@ import (
 // HandleError maps domain errors to standard HTTP responses with matching status codes.
 func HandleError(c *gin.Context, err error) {
 	switch {
-	case errors.Is(err, app.ErrDivisionByZero), errors.Is(err, app.ErrOverflow):
+	case errors.Is(err, app.ErrDivisionByZero), errors.Is(err, app.ErrOverflow), errors.Is(err, app.ErrInvalidSquareRoot):
 		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})
 	default:
 		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: "unexpected error"})

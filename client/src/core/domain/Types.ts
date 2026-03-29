@@ -1,4 +1,4 @@
-export type Operator = "+" | "-" | "×" | "÷";
+export type Operator = "+" | "-" | "×" | "÷" | "xʸ" | "√";
 
 // Standard payload expected by the API endpoints
 export interface BinaryOperationPayload {

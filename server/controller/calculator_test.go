@@ -17,18 +17,22 @@ import (
 
 // MockApp is a simple mock implementation of the CalculatorApp interface
 type MockApp struct {
-	addResult        float64
-	addErr           error
-	subtractResult   float64
-	subtractErr      error
-	multiplyResult   float64
-	multiplyErr      error
-	divideResult     float64
-	divideErr        error
-	negateResult     float64
-	negateErr        error
-	percentageResult float64
-	percentageErr    error
+	addResult          float64
+	addErr             error
+	subtractResult     float64
+	subtractErr        error
+	multiplyResult     float64
+	multiplyErr        error
+	divideResult       float64
+	divideErr          error
+	exponentiateResult float64
+	exponentiateErr    error
+	squareRootResult   float64
+	squareRootErr      error
+	negateResult       float64
+	negateErr          error
+	percentageResult   float64
+	percentageErr      error
 }
 
 func (m *MockApp) Add(a, b float64) (float64, error) {
@@ -45,6 +49,14 @@ func (m *MockApp) Multiply(a, b float64) (float64, error) {
 
 func (m *MockApp) Divide(a, b float64) (float64, error) {
 	return m.divideResult, m.divideErr
+}
+
+func (m *MockApp) Exponentiate(base, exponent float64) (float64, error) {
+	return m.exponentiateResult, m.exponentiateErr
+}
+
+func (m *MockApp) SquareRoot(value float64) (float64, error) {
+	return m.squareRootResult, m.squareRootErr
 }
 
 func (m *MockApp) Negate(value float64) (float64, error) {
@@ -444,4 +456,106 @@ func TestCalculatorController_Percentage_MissingValue(t *testing.T) {
 	router.ServeHTTP(rec, req)
 
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestCalculatorController_Exponentiate_Success(t *testing.T) {
+	mockApp := &MockApp{exponentiateResult: 8.0, exponentiateErr: nil}
+	ctrl, router := setupControllerWithMock(mockApp)
+	router.POST("/exponentiate", ctrl.Exponentiate)
+
+	body := `{"a": 2, "b": 3}`
+	req := httptest.NewRequest(http.MethodPost, "/exponentiate", bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+	var response models.CalculationResponse
+	err := json.Unmarshal(rec.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, 8.0, response.Result)
+}
+
+func TestCalculatorController_Exponentiate_InvalidJSON(t *testing.T) {
+	mockApp := &MockApp{}
+	ctrl, router := setupControllerWithMock(mockApp)
+	router.POST("/exponentiate", ctrl.Exponentiate)
+
+	body := `invalid json`
+	req := httptest.NewRequest(http.MethodPost, "/exponentiate", bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestCalculatorController_Exponentiate_OverflowError(t *testing.T) {
+	mockApp := &MockApp{exponentiateResult: 0, exponentiateErr: app.ErrOverflow}
+	ctrl, router := setupControllerWithMock(mockApp)
+	router.POST("/exponentiate", ctrl.Exponentiate)
+
+	body := `{"a": 1e308, "b": 2}`
+	req := httptest.NewRequest(http.MethodPost, "/exponentiate", bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestCalculatorController_SquareRoot_Success(t *testing.T) {
+	mockApp := &MockApp{squareRootResult: 4.0, squareRootErr: nil}
+	ctrl, router := setupControllerWithMock(mockApp)
+	router.POST("/squareroot", ctrl.SquareRoot)
+
+	body := `{"value": 16}`
+	req := httptest.NewRequest(http.MethodPost, "/squareroot", bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+	var response models.CalculationResponse
+	err := json.Unmarshal(rec.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, 4.0, response.Result)
+}
+
+func TestCalculatorController_SquareRoot_InvalidJSON(t *testing.T) {
+	mockApp := &MockApp{}
+	ctrl, router := setupControllerWithMock(mockApp)
+	router.POST("/squareroot", ctrl.SquareRoot)
+
+	body := `invalid json`
+	req := httptest.NewRequest(http.MethodPost, "/squareroot", bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestCalculatorController_SquareRoot_NegativeValueError(t *testing.T) {
+	mockApp := &MockApp{squareRootResult: 0, squareRootErr: app.ErrInvalidSquareRoot}
+	ctrl, router := setupControllerWithMock(mockApp)
+	router.POST("/squareroot", ctrl.SquareRoot)
+
+	body := `{"value": -4}`
+	req := httptest.NewRequest(http.MethodPost, "/squareroot", bytes.NewBufferString(body))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+	var response models.ErrorResponse
+	err := json.Unmarshal(rec.Body.Bytes(), &response)
+	assert.NoError(t, err)
+	assert.Equal(t, "square root of negative number is not allowed", response.Error)
 }

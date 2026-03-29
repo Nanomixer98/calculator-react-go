@@ -83,6 +83,9 @@ export function useCalculator(api: CalculatorApiPort) {
         case "÷":
           result = await api.divide(previousValue, inputValue);
           break;
+        case "xʸ":
+          result = await api.exponentiate(previousValue, inputValue);
+          break;
       }
 
       const resultStr = String(result);
@@ -118,6 +121,9 @@ export function useCalculator(api: CalculatorApiPort) {
         case "÷":
           result = await api.divide(previousValue, inputValue);
           break;
+        case "xʸ":
+          result = await api.exponentiate(previousValue, inputValue);
+          break;
       }
 
       return {
@@ -141,6 +147,12 @@ export function useCalculator(api: CalculatorApiPort) {
       return { display: String(result) };
     });
 
+  const squareRoot = () =>
+    asyncUpdate(async () => {
+      const result = await api.squareRoot(parseFloat(state.display));
+      return { display: String(result) };
+    });
+
   return {
     state,
     inputDigit,
@@ -150,5 +162,6 @@ export function useCalculator(api: CalculatorApiPort) {
     calculate,
     toggleSign,
     percentage,
+    squareRoot,
   };
 }

@@ -49,6 +49,18 @@ export class RestCalculatorApi implements CalculatorApiPort {
     return result;
   }
 
+  async exponentiate(base: number, exponent: number): Promise<number> {
+    const payload: BinaryOperationPayload = { a: base, b: exponent };
+    const { result } = await this.post<CalculationResponse>("exponentiate", payload);
+    return result;
+  }
+
+  async squareRoot(value: number): Promise<number> {
+    const payload: UnaryOperationPayload = { value };
+    const { result } = await this.post<CalculationResponse>("squareroot", payload);
+    return result;
+  }
+
   async negate(value: number): Promise<number> {
     const payload: UnaryOperationPayload = { value };
     const { result } = await this.post<CalculationResponse>("negate", payload);

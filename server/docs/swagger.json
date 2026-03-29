@@ -89,6 +89,46 @@
                 }
             }
         },
+        "/exponentiate": {
+            "post": {
+                "description": "Raises base to the power of exponent.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Binary Operations"
+                ],
+                "summary": "Exponentiation",
+                "parameters": [
+                    {
+                        "description": "Base and exponent",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.BinaryOperationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculation result",
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Error like Invalid JSON, NaN/Inf, or Overflow",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/multiply": {
             "post": {
                 "description": "Multiplies operand A by operand B.",
@@ -182,6 +222,46 @@
                     "Unary Operations"
                 ],
                 "summary": "Percentage",
+                "parameters": [
+                    {
+                        "description": "Single operand",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UnaryOperationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Calculation result",
+                        "schema": {
+                            "$ref": "#/definitions/models.CalculationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/squareroot": {
+            "post": {
+                "description": "Returns the square root of the given value. Returns a 400 Error for negative values.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Unary Operations"
+                ],
+                "summary": "Square Root",
                 "parameters": [
                     {
                         "description": "Single operand",

@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
+import "@testing-library/jest-dom";
 import { CalculatorKeypad } from "./CalculatorKeypad";
 import type { Operator } from "../../../core/domain/Types";
 
@@ -10,6 +11,7 @@ describe("CalculatorKeypad", () => {
     onClear: vi.fn(),
     onToggleSign: vi.fn(),
     onPercentage: vi.fn(),
+    onSquareRoot: vi.fn(),
     onPerformOperation: vi.fn(),
     onInputDigit: vi.fn(),
     onInputDecimal: vi.fn(),
@@ -18,6 +20,10 @@ describe("CalculatorKeypad", () => {
 
   it("should render all buttons", () => {
     render(<CalculatorKeypad {...defaultProps} />);
+
+    // Check for new operation buttons
+    expect(screen.getByText("xʸ")).toBeInTheDocument();
+    expect(screen.getByText("√")).toBeInTheDocument();
 
     // Check for operation buttons
     expect(screen.getByText("AC")).toBeInTheDocument();
@@ -66,9 +72,20 @@ describe("CalculatorKeypad", () => {
     expect(onPercentage).toHaveBeenCalled();
   });
 
+  it("should call onSquareRoot when √ button is clicked", () => {
+    const onSquareRoot = vi.fn();
+    render(<CalculatorKeypad {...defaultProps} onSquareRoot={onSquareRoot} />);
+
+    fireEvent.click(screen.getByText("√"));
+    expect(onSquareRoot).toHaveBeenCalled();
+  });
+
   it("should call onPerformOperation with correct operator", () => {
     const onPerformOperation = vi.fn();
     render(<CalculatorKeypad {...defaultProps} onPerformOperation={onPerformOperation} />);
+
+    fireEvent.click(screen.getByText("xʸ"));
+    expect(onPerformOperation).toHaveBeenCalledWith("xʸ");
 
     fireEvent.click(screen.getByText("÷"));
     expect(onPerformOperation).toHaveBeenCalledWith("÷");
@@ -123,7 +140,7 @@ describe("CalculatorKeypad", () => {
   it("should highlight active operator", () => {
     const { rerender } = render(<CalculatorKeypad {...defaultProps} operator="+" />);
 
-    // Check that the + button has the active class styling (bg-white text-orange-500)
+    // Check that + button has active class styling (bg-white text-orange-500)
     const plusButton = screen.getByText("+");
     expect(plusButton.className).toContain("bg-white");
     expect(plusButton.className).toContain("text-orange-500");
@@ -145,5 +162,11 @@ describe("CalculatorKeypad", () => {
     const minusButton = screen.getByText("−");
     expect(minusButton.className).toContain("bg-white");
     expect(minusButton.className).toContain("text-orange-500");
+
+    // Test exponentiation operator
+    rerender(<CalculatorKeypad {...defaultProps} operator="xʸ" />);
+    const exponentiateButton = screen.getByText("xʸ");
+    expect(exponentiateButton.className).toContain("bg-white");
+    expect(exponentiateButton.className).toContain("text-purple-600");
   });
 });

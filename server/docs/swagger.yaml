@@ -82,6 +82,32 @@ paths:
       summary: Division
       tags:
       - Binary Operations
+  /exponentiate:
+    post:
+      consumes:
+      - application/json
+      description: Raises base to the power of exponent.
+      parameters:
+      - description: Base and exponent
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.BinaryOperationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Calculation result
+          schema:
+            $ref: '#/definitions/models.CalculationResponse'
+        "400":
+          description: Error like Invalid JSON, NaN/Inf, or Overflow
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Exponentiation
+      tags:
+      - Binary Operations
   /multiply:
     post:
       consumes:
@@ -158,6 +184,33 @@ paths:
           schema:
             $ref: '#/definitions/models.ErrorResponse'
       summary: Percentage
+      tags:
+      - Unary Operations
+  /squareroot:
+    post:
+      consumes:
+      - application/json
+      description: Returns the square root of the given value. Returns a 400 Error
+        for negative values.
+      parameters:
+      - description: Single operand
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UnaryOperationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Calculation result
+          schema:
+            $ref: '#/definitions/models.CalculationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Square Root
       tags:
       - Unary Operations
   /subtract:

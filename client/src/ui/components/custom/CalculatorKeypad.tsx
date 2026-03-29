@@ -7,6 +7,7 @@ interface CalculatorKeypadProps {
   onClear: () => void;
   onToggleSign: () => void;
   onPercentage: () => void;
+  onSquareRoot: () => void;
   onPerformOperation: (op: Operator) => void;
   onInputDigit: (digit: string) => void;
   onInputDecimal: () => void;
@@ -19,6 +20,7 @@ export function CalculatorKeypad({
   onClear,
   onToggleSign,
   onPercentage,
+  onSquareRoot,
   onPerformOperation,
   onInputDigit,
   onInputDecimal,
@@ -26,6 +28,28 @@ export function CalculatorKeypad({
 }: CalculatorKeypadProps) {
   return (
     <div className="grid grid-cols-4 gap-3">
+      {/* New Operations Row */}
+      <Button
+        variant="secondary"
+        className={`h-16 text-xl font-medium rounded-full col-span-2 ${
+          operator === "xʸ"
+            ? "bg-white text-purple-600"
+            : "bg-purple-600 hover:bg-purple-500 text-white"
+        }`}
+        onClick={() => onPerformOperation("xʸ")}
+        disabled={loading}
+      >
+        xʸ
+      </Button>
+      <Button
+        variant="secondary"
+        className="h-16 text-xl font-medium rounded-full col-span-2 bg-purple-600 hover:bg-purple-500 text-white"
+        onClick={onSquareRoot}
+        disabled={loading}
+      >
+        √
+      </Button>
+
       {/* Row 1 */}
       <Button
         variant="secondary"

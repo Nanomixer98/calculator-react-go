@@ -146,6 +146,58 @@ func (ctrl *CalculatorController) Negate(c *gin.Context) {
 	HandleSuccess(c, result)
 }
 
+// Exponentiate godoc
+// @Summary      Exponentiation
+// @Description  Raises base to the power of exponent.
+// @Tags         Binary Operations
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.BinaryOperationRequest  true  "Base and exponent"
+// @Success      200      {object}  models.CalculationResponse     "Calculation result"
+// @Failure      400      {object}  models.ErrorResponse           "Error like Invalid JSON, NaN/Inf, or Overflow"
+// @Router       /exponentiate [post]
+func (ctrl *CalculatorController) Exponentiate(c *gin.Context) {
+	req, err := BindBinaryRequest(c)
+	if err != nil {
+		HandleBindError(c, err)
+		return
+	}
+
+	result, err := ctrl.app.Exponentiate(*req.A, *req.B)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	HandleSuccess(c, result)
+}
+
+// SquareRoot godoc
+// @Summary      Square Root
+// @Description  Returns the square root of the given value. Returns a 400 Error for negative values.
+// @Tags         Unary Operations
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.UnaryOperationRequest  true  "Single operand"
+// @Success      200      {object}  models.CalculationResponse    "Calculation result"
+// @Failure      400      {object}  models.ErrorResponse
+// @Router       /squareroot [post]
+func (ctrl *CalculatorController) SquareRoot(c *gin.Context) {
+	req, err := BindUnaryRequest(c)
+	if err != nil {
+		HandleBindError(c, err)
+		return
+	}
+
+	result, err := ctrl.app.SquareRoot(*req.Value)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+
+	HandleSuccess(c, result)
+}
+
 // Percentage godoc
 // @Summary      Percentage
 // @Description  Returns the percentage of the given value (value / 100).

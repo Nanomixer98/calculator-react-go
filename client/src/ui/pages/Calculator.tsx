@@ -14,6 +14,7 @@ export default function Calculator() {
     calculate,
     toggleSign,
     percentage,
+    squareRoot,
   } = useCalculator(rootRestCalculatorApi);
 
   return (
@@ -33,6 +34,7 @@ export default function Calculator() {
           onClear={clear}
           onToggleSign={toggleSign}
           onPercentage={percentage}
+          onSquareRoot={squareRoot}
           onPerformOperation={performOperation}
           onInputDigit={inputDigit}
           onInputDecimal={inputDecimal}

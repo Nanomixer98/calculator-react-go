@@ -28,8 +28,9 @@ func (r *Router) RegisterRoutes(engine *gin.Engine) {
 		api.POST("/subtract", r.ctrl.Subtract)
 		api.POST("/multiply", r.ctrl.Multiply)
 		api.POST("/divide", r.ctrl.Divide)
+		api.POST("/exponentiate", r.ctrl.Exponentiate)
+		api.POST("/squareroot", r.ctrl.SquareRoot)
 		api.POST("/negate", r.ctrl.Negate)
 		api.POST("/percentage", r.ctrl.Percentage)
 	}
 }
-

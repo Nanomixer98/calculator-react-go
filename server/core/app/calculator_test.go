@@ -423,3 +423,139 @@ func TestCalculatorApp_Percentage(t *testing.T) {
 		})
 	}
 }
+
+func TestCalculatorApp_Exponentiate(t *testing.T) {
+	calc := NewCalculatorApp()
+
+	tests := []struct {
+		name     string
+		base     float64
+		exponent float64
+		want     float64
+		wantErr  error
+	}{
+		{
+			name:     "power of 2",
+			base:     2,
+			exponent: 3,
+			want:     8,
+			wantErr:  nil,
+		},
+		{
+			name:     "power of 1",
+			base:     5,
+			exponent: 1,
+			want:     5,
+			wantErr:  nil,
+		},
+		{
+			name:     "power of 0",
+			base:     5,
+			exponent: 0,
+			want:     1,
+			wantErr:  nil,
+		},
+		{
+			name:     "negative exponent",
+			base:     2,
+			exponent: -2,
+			want:     0.25,
+			wantErr:  nil,
+		},
+		{
+			name:     "fractional exponent",
+			base:     4,
+			exponent: 0.5,
+			want:     2,
+			wantErr:  nil,
+		},
+		{
+			name:     "zero base",
+			base:     0,
+			exponent: 5,
+			want:     0,
+			wantErr:  nil,
+		},
+		{
+			name:     "overflow",
+			base:     math.MaxFloat64,
+			exponent: 2,
+			want:     0,
+			wantErr:  ErrOverflow,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := calc.Exponentiate(tt.base, tt.exponent)
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("Exponentiate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if err == nil && got != tt.want {
+				t.Errorf("Exponentiate() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCalculatorApp_SquareRoot(t *testing.T) {
+	calc := NewCalculatorApp()
+
+	tests := []struct {
+		name    string
+		value   float64
+		want    float64
+		wantErr error
+	}{
+		{
+			name:    "perfect square",
+			value:   16,
+			want:    4,
+			wantErr: nil,
+		},
+		{
+			name:    "non-perfect square",
+			value:   2,
+			want:    math.Sqrt(2),
+			wantErr: nil,
+		},
+		{
+			name:    "zero",
+			value:   0,
+			want:    0,
+			wantErr: nil,
+		},
+		{
+			name:    "one",
+			value:   1,
+			want:    1,
+			wantErr: nil,
+		},
+		{
+			name:    "decimal number",
+			value:   2.25,
+			want:    1.5,
+			wantErr: nil,
+		},
+		{
+			name:    "negative number",
+			value:   -4,
+			want:    0,
+			wantErr: ErrInvalidSquareRoot,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := calc.SquareRoot(tt.value)
+			if !errors.Is(err, tt.wantErr) {
+				t.Errorf("SquareRoot() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if err == nil && got != tt.want {
+				t.Errorf("SquareRoot() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
